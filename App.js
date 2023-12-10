@@ -4,8 +4,9 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/Home';
-import DetailsScreen from './screens/Details';
+import FiltersScreen from './screens/Filters';
 import BCScanner from './screens/BarCodeScanner';
+import Product from './screens/Product';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,8 +15,9 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Filters" component={FiltersScreen} />
         <Stack.Screen name="Camera" component={BCScanner} />
+        <Stack.Screen name="Product" component={Product} options={{ title: 'Product\'s details:' }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,10 +1,10 @@
 import React, { useState, useEffect} from 'react';
 import { StyleSheet,View, Text, Button } from 'react-native';
 import { BarCodePoint, BarCodeScanner } from 'expo-barcode-scanner';
-
+import {Product, handleBarCodeRead} from './Product';
 
 // const BCScanner = ({ navigation }) =>
-export default function App() {
+export default function App({ navigation }) {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [text, setText] = useState('Not yet scanned');
@@ -57,6 +57,11 @@ if(hasPermission === false){
       <Text style={styles.maintext}>{text}</Text>
 
       {scanned && <Button title={'Scan again?'} onPress={() => setScanned(false)} color='tomato' />}
+      {scanned &&  <Button 
+      title="Go to Product"
+      onPress={() => navigation.navigate('Product', {
+        code : {text},
+      })} />}
     </View>
   );
 }
