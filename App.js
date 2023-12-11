@@ -7,6 +7,7 @@ import HomeScreen from './screens/Home';
 import FiltersScreen from './screens/Filters';
 import BCScanner from './screens/BarCodeScanner';
 import Product from './screens/Product';
+import UserScreen from './screens/User';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ function App() {
         <Stack.Screen name="Filters" component={FiltersScreen} />
         <Stack.Screen name="Camera" component={BCScanner} />
         <Stack.Screen name="Product" component={Product} options={{ title: 'Product\'s details:' }}/>
+        <Stack.Screen name="User" component={UserScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
