@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CheckBox } from '@rneui/themed';
@@ -6,7 +6,7 @@ import { ListItem } from '@rneui/themed';
 
 
 const UserScreen = ({ navigation }) => {
-
+  const [allergeny, setAllergeny] = useState([]);
 
     const checkIfExist = async()=>{
         if(await AsyncStorage.getItem('allergens') ==null){
@@ -26,6 +26,8 @@ const UserScreen = ({ navigation }) => {
                 Mollusks: { english: 'Mollusks', polish: 'Mięczaki', value: false }
               };
             storeData(allergen);
+            setAllergeny(allergen);
+
             console.log("PUSTA");
         }else{
             console.log("cos jest");
@@ -43,7 +45,8 @@ const UserScreen = ({ navigation }) => {
       const getData = async () => {
         try {
           const jsonValue = await AsyncStorage.getItem('allergens');
-          console.log("aa"+jsonValue);
+          setAllergeny(jsonValue);
+          console.log("GET: "+jsonValue);
           return jsonValue != null ? jsonValue : null;
         } catch (e) {
           // error reading value
@@ -51,30 +54,33 @@ const UserScreen = ({ navigation }) => {
       };
 
       useEffect(()=>{
+        checkIfExist();
+      },[]);
         const getDataKeys = async () => {
             try {
               const jsonValue = await AsyncStorage.getItem('allergens');
+              console.log("SIEMAaaaaaaaaa"+allergeny);
               const jsparse = JSON.parse(jsonValue);
               const keyArray = [];
-              for(var i in jsparse){
-                var key = i;
-                // console.log(key);
-                keyArray.push(<View key={key}>
-                    <ListItem bottomDivider>
-                    <ListItem.CheckBox
-                      // Use ThemeProvider to change the defaults of the checkbox
-                      iconType="material-community"
-                      checkedIcon="checkbox-marked"
-                      uncheckedIcon="checkbox-blank-outline"
-                      checked={checked[0]}
-                      onPress={() => setChecked([!checked[0], checked[1]])}
-                    />
-                    <ListItem.Content>
-                    <ListItem.Title>{`${key}`}</ListItem.Title>
-                    </ListItem.Content>
-                  </ListItem>
-                  </View>);
-            }
+            //   for(var i in jsparse){
+            //     var key = i;
+            //     // console.log(key);
+            //     keyArray.push(<View key={key}>
+            //         <ListItem bottomDivider>
+            //         <ListItem.CheckBox
+            //           // Use ThemeProvider to change the defaults of the checkbox
+            //           iconType="material-community"
+            //           checkedIcon="checkbox-marked"
+            //           uncheckedIcon="checkbox-blank-outline"
+            //           checked={checked[0]}
+            //           onPress={() => setChecked([!checked[0], checked[1]])}
+            //         />
+            //         <ListItem.Content>
+            //         <ListItem.Title>{`${key}`}</ListItem.Title>
+            //         </ListItem.Content>
+            //       </ListItem>
+            //       </View>);
+            // }
     
             
               return keyArray != null ? keyArray : null;
@@ -83,8 +89,7 @@ const UserScreen = ({ navigation }) => {
               // error reading value
             }
           };
-          getDataKeys();
-      },[]);
+       //s   getDataKeys();;
       
       const editData = async (what) => {
         try {
@@ -95,6 +100,7 @@ const UserScreen = ({ navigation }) => {
           console.log(ajsonValue[what]); 
           const jsonValueS = JSON.stringify(ajsonValue);
           await AsyncStorage.setItem('allergens', jsonValueS);
+          setAllergeny(jsonValueS);
           return ajsonValue != null ? JSON.parse(ajsonValue) : null;
         } catch (e) {
           // error reading value
@@ -102,19 +108,20 @@ const UserScreen = ({ navigation }) => {
       };
       const clearData = async () => {
         try {        
-        await AsyncStorage.clear();        
+        await AsyncStorage.clear();
+        setAllergeny(null);        
         } catch (e) {        
         console.error(e);        
         }
     }
     const [checked, setChecked] = React.useState([false, false]);
-    const keys = getDataKeys();
+    // const keys = getDataKeys();
   return (
     <View>
       <Text>User Screen</Text>
       <Button
-        title="Set"
-        onPress={() => storeData(person)}
+        title="GETKEY"
+        onPress={() => getDataKeys()}
       />            
             <Button
         title="Edit"
@@ -136,6 +143,7 @@ const UserScreen = ({ navigation }) => {
         title="Go back to Home"
         onPress={() => navigation.navigate('Home')}
       />
+    
 {/* {getDataKeys()} */}
             {/* <ListItem bottomDivider>
            <ListItem.CheckBox
