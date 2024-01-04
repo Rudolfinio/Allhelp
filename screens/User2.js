@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, ScrollView, SafeAreaView } from "react-native";
+import { View, Text, Button, ScrollView, SafeAreaView,StyleSheet, StatusBar } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CheckBox, ListItem } from "@rneui/themed";
 
@@ -48,7 +48,6 @@ const MyComponent = () => {
     console.log(updatedAllergens);
     setAllergeny(updatedAllergens);
 
-    // Zapisz zaktualizowane alergeny w AsyncStorage
     AsyncStorage.setItem("allergens2", JSON.stringify(updatedAllergens));
   };
 
@@ -61,11 +60,20 @@ const MyComponent = () => {
       console.error(e);
     }
   };
+const clearFromEat = async () => {
+  try {
+    await AsyncStorage.removeItem("eat");
+
+    console.log("Dane usunięte pomyślnie");
+  } catch (error) {
+    console.error("Błąd podczas usuwania danych:", error);
+  }
+};
 
   return (
     <SafeAreaView>
       <ScrollView>
-        <View>
+        <View style={styles.container}>
           {allergeny &&
             Object.keys(allergeny).map((key, index) => (
               <View
@@ -80,10 +88,17 @@ const MyComponent = () => {
               </View>
             ))}
           <Button title="Clear" onPress={() => clearData()} />
+          <Button title="Clear Eaten" onPress={() => clearFromEat()} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+  }
+});
 export default MyComponent;

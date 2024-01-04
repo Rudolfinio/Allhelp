@@ -8,6 +8,8 @@ import {
   Pressable,
   Modal,
   Alert,
+  StatusBar,
+  Button,
 } from "react-native";
 import { StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,17 +17,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const Product = ({ route, navigation }) => {
   const [productName, setproductName] = useState(null);
   const [productImage, setproductImage] = useState(null);
+  const [productImageSmall, setproductImageSmall] = useState(null);
   const [productIngredients, setproductIngredients] = useState([]);
   const [productAllergens, setproductAllergens] = useState([]);
   const [productTraces, setproductTraces] = useState([]);
   const [error, setError] = useState(null);
   const { code } = route.params;
-  const apiUrl = `https://world.openfoodfacts.org/api/v2/product/${code["text"]}?fields=product_name,selected_images,ingredients,allergens_hierarchy,allergens_from_ingredients,traces`;
+  const apiUrl = `https://world.openfoodfacts.org/api/v2/product/${
+    route.params?.code?.text ? route.params?.code.text : route.params?.code
+  }?fields=code,product_name,selected_images,ingredients,allergens_hierarchy,allergens_from_ingredients,traces`;
   const [readed, setReaded] = useState(false);
   const [allergeny, setAllergeny] = useState([]);
+  const [Code, setCode] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
+    console.log("Product screen code:", route.params?.code); // Check if the code is logged correctly
+
     const fetchDataAll = async () => {
       try {
         const storedAllergens = await AsyncStorage.getItem("allergens2");
@@ -44,7 +52,7 @@ const Product = ({ route, navigation }) => {
     fetchDataAll();
     setReaded(true);
     fetchData(apiUrl);
-  }, []);
+  }, [route.params?.code]);
 
   useEffect(() => {
     if (readed) {
@@ -92,9 +100,11 @@ const Product = ({ route, navigation }) => {
       if (!response.ok) {
         throw new Error(`Błąd sieci: ${response.status}`);
       }
+      console.log("Product screen data:", data); // Log the retrieved data
 
       const data = await response.json();
       setproductName(data["product"]["product_name"]);
+      setCode(data["product"]["code"]);
       data["product"]["selected_images"]["front"]["display"]["pl"]
         ? setproductImage(
             data["product"]["selected_images"]["front"]["display"]["pl"]
@@ -102,6 +112,11 @@ const Product = ({ route, navigation }) => {
         : setproductImage(
             data["product"]["selected_images"]["front"]["display"]["en"]
           );
+      setproductImageSmall(
+        data.product.selected_images?.front?.small[
+          Object.keys(data.product.selected_images.front.small)[0]
+        ]
+      );
       setproductAllergens(data["product"]["allergens_hierarchy"]);
       setproductIngredients(data["product"]["ingredients"]);
       setproductTraces(
@@ -146,7 +161,10 @@ const Product = ({ route, navigation }) => {
           ? productTraces.map((item) => item.replace("en:", "")).join(", ")
           : "N/A"}
       </Text>
-
+      <Button
+        title="Go to Eat"
+        onPress={() => navigation.navigate("Eat", { Code, productName, productImageSmall })}
+      />
       <Modal
         animationType="slide"
         transparent={true}
@@ -179,6 +197,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+
     //justifyContent: 'center',
   },
   image: {
@@ -187,6 +207,7 @@ const styles = StyleSheet.create({
     height: 250,
     resizeMode: "contain",
     justifyContent: "center",
+    marginTop: 42,
   },
   centeredView: {
     flex: 1,

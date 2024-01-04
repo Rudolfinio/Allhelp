@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View, Text, Button, StatusBar } from "react-native";
 import { BarCodePoint, BarCodeScanner } from "expo-barcode-scanner";
 import { Product, handleBarCodeRead } from "./Product";
 
@@ -46,7 +46,6 @@ export default function App({ navigation }) {
     );
   }
 
-  // Return the View
   return (
     <View style={styles.container}>
       <View style={styles.barcodebox}>
@@ -83,7 +82,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center",    
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
   },
   maintext: {
     fontSize: 16,
