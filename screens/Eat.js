@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const eatInit = {
   eat: {},
 };
+
 const Eat = ({ route, navigation }) => {
   const buttonsData = [
     { icon: "angry", value: 1, color: "red" },
