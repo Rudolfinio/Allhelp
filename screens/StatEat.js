@@ -24,7 +24,6 @@ const buttonsData = [
   { icon: "grin", value: 5, color: "green" },
 ];
 const StatEat = ({ route, navigation }) => {
-  //const { code } = route.params;
   const [eaten, setEaten] = useState([]);
   const [selected, setSelected] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -50,7 +49,6 @@ const StatEat = ({ route, navigation }) => {
     fetchDataAll();
   }, []);
   useEffect(() => {
-    // console.log("EATEN:", eaten);
   }, [eaten]);
   const markedDates = {};
 
@@ -64,10 +62,12 @@ const StatEat = ({ route, navigation }) => {
 
     const selected = {};
     dates.forEach((date) => {
+      const foundObject = buttonsData.find(
+        (item) => item.value === productData[date].wellbeing
+      );
       selected[date] = {
-        //selected: false,
         marked: true,
-        dotColor: "orange",
+        dotColor: foundObject.color,
         selectedDotColor: "blue",
         disableTouchEvent: false,
       };
@@ -84,11 +84,16 @@ const StatEat = ({ route, navigation }) => {
   const closeModal = () => {
     setNotes("");
     setWellbeing("");
+    setColor("");
+    setIcon("");
     setSelected(null);
     setModalVisible(false);
   };
 
   const info = (date) => {
+    const foundObject = buttonsData.find(
+      (item) => item.value === eaten.eat[codeSel][date]?.wellbeing
+    );
     setNotes(
       eaten.eat[codeSel][date]?.notes
         ? "Notes: " + eaten.eat[codeSel][date]?.notes
@@ -100,11 +105,8 @@ const StatEat = ({ route, navigation }) => {
         : ""
     );
 
-    const foundObject = buttonsData.find(
-      (item) => item.value === eaten.eat[codeSel][date]?.wellbeing
-    );
-    setColor(foundObject.color);
-    setIcon(foundObject.icon);
+    setColor(foundObject?.color ? foundObject?.color : "white");
+    setIcon(foundObject?.icon ? foundObject?.icon : "");
     console.log(wellbeing);
     console.log(col);
     console.log(icon);
@@ -160,6 +162,7 @@ const StatEat = ({ route, navigation }) => {
                 }}
               />
               <View style={styles.buttonsContainer}>
+                <Text>{wellbeing}</Text>
                 <TouchableOpacity
                   style={[
                     styles.button,
@@ -171,9 +174,11 @@ const StatEat = ({ route, navigation }) => {
                   <Icon name={icon} size={24} color="white" />
                 </TouchableOpacity>
               </View>
-              <Text>{wellbeing}</Text>
+
               <Text>{notes}</Text>
-              <Button title="Close" onPress={closeModal} />
+              <View style={styles.closeButtonContainer}>
+                <Button title="Close" onPress={closeModal} />
+              </View>
             </View>
           </View>
         </Modal>
@@ -186,6 +191,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  closeButtonContainer: {
+    marginTop: 20, // Dodaj margines od góry, aby oddzielić przycisk od innych elementów
+    alignSelf: "center", // Umieść przycisk "Close" na środku ekranu (opcjonalne)
   },
   image: {
     width: 100,
@@ -217,11 +226,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     width: "100%",
-    height: "100%", 
+    height: "100%",
     backgroundColor: "white",
     padding: 20,
   },
