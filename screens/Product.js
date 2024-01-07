@@ -40,9 +40,6 @@ const Product = ({ route, navigation }) => {
 
         if (storedAllergens) {
           setAllergeny(JSON.parse(storedAllergens));
-        } else {
-          await AsyncStorage.setItem("allergens2", JSON.stringify(allergen));
-          setAllergeny(allergen);
         }
       } catch (error) {
         console.error("Error accessing AsyncStorage:", error);
