@@ -10,7 +10,6 @@ import {
   Modal,
   TouchableOpacity,
   StatusBar,
-  TouchableWithoutFeedback,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Header, CheckBox, ListItem } from "@rneui/themed";
@@ -58,9 +57,11 @@ const FiltersScreen = ({ navigation }) => {
   const [tracesTags, setTracesTags] = useState("");
   const [allergensTagsTable, setallergensTagsTable] = useState([]);
   const [tracesTagsTable, setTracesTagsTable] = useState([]);
-  const apiUrl = `https://world.openfoodfacts.net/api/v2/search?allergens_tags=${allergensTags}&traces_tags=${tracesTags}&fields=selected_images,product_name,code,allergens_from_ingredients,traces,allergens_tags&sort_by=unique_scans_n&page_size=24`;
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(null);
+
+  const apiUrl = `https://world.openfoodfacts.org/api/v2/search?allergens_tags=${allergensTags}&traces_tags=${tracesTags}&fields=selected_images,product_name,code,allergens_from_ingredients,traces,allergens_tags&sort_by=unique_scans_n&page_size=24&page=${page}`;
   //zapamietac by zrobic by trace tez szukalo
-  const [Pages, setPages] = useState(null);
   useEffect(() => {
     setAllergeny(allergen);
     setTraces(traces);
@@ -68,7 +69,7 @@ const FiltersScreen = ({ navigation }) => {
   }, []);
   useEffect(() => {
     fetchData(apiUrl);
-  }, [allergensTags, tracesTags]);
+  }, [allergensTags, tracesTags, page]);
   const fetchData = async (url) => {
     try {
       const response = await fetch(url);
@@ -77,7 +78,18 @@ const FiltersScreen = ({ navigation }) => {
       }
 
       const data = await response.json();
-      setProductData(data.products);
+      if (page >= 2) {
+        console.log("2");
+        setProductData((prevProductData) => [
+          ...prevProductData,
+          ...data.products,
+        ]);
+      }else{
+        console.log("1");
+
+        setProductData(data.products);
+      }
+      setPages(data.page_count);
     } catch (error) {
       setError(`An error occurred: ${error.message}`);
     }
@@ -108,12 +120,12 @@ const FiltersScreen = ({ navigation }) => {
     }
 
     const allergensString = updatedAllergensTable.join(",");
+    setPage(1);
 
     setallergensTagsTable(updatedAllergensTable);
     setallergensTags(allergensString);
     console.log(allergensString);
     console.log(apiUrl);
-    // fetchData(apiUrl);
   };
 
   const handleCheckboxChangeTraces = (key) => {
@@ -132,9 +144,8 @@ const FiltersScreen = ({ navigation }) => {
     } else {
       updatedAllergensTable.splice(index, 1);
     }
-
     const allergensString = updatedAllergensTable.join(",");
-
+    setPage(1);
     setTracesTagsTable(updatedAllergensTable);
     setTracesTags(allergensString);
     console.log(allergensString);
@@ -148,11 +159,17 @@ const FiltersScreen = ({ navigation }) => {
 
     navigateToProduct(code);
   };
-  const handleOverlayPress = () => {
-    closeModal();
-  };
+
   const navigateToProduct = (code) => {
     navigation.navigate("Product", { code });
+  };
+
+  const handleEndReached = () => {
+    // Load more data when the end of the list is reached
+    if (page < pages) {
+      setPage((prevPage) => prevPage + 1);
+    }
+    console.log("??");
   };
   return (
     <SafeAreaView>
@@ -193,6 +210,8 @@ const FiltersScreen = ({ navigation }) => {
               ))}
             </View>
           )}
+          <Button title="Next" onPress={handleEndReached} />
+
           <Button
             title="Go back to Home"
             onPress={() => navigation.navigate("Home")}
@@ -205,69 +224,61 @@ const FiltersScreen = ({ navigation }) => {
             onRequestClose={closeModal}
           >
             <ScrollView>
-                <View style={styles.modalContainer}>
-                  <View style={styles.modalContent}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        marginBottom: 10,
-                        paddingHorizontal: 10,
-                      }}
-                    >
-                      <Text
-                        style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 10,
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    <Text style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}>
+                      Name
+                    </Text>
+                    <Text style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}>
+                      Allergen
+                    </Text>
+                    <Text style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}>
+                      Traces
+                    </Text>
+                  </View>
+                  {allergeny &&
+                    Object.keys(allergeny).map((key, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: 10,
+                          paddingHorizontal: 10,
+                        }}
                       >
-                        Name
-                      </Text>
-                      <Text
-                        style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}
-                      >
-                        Allergen
-                      </Text>
-                      <Text
-                        style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}
-                      >
-                        Traces
-                      </Text>
-                    </View>
-                    {allergeny &&
-                      Object.keys(allergeny).map((key, index) => (
-                        <View
-                          key={index}
+                        <Text
                           style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            marginBottom: 10,
-                            paddingHorizontal: 10,
+                            flex: 1,
+                            marginRight: 5,
+                            fontWeight: "bold",
                           }}
                         >
-                          <Text
-                            style={{
-                              flex: 1,
-                              marginRight: 5,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            {allergeny[key].english}
-                          </Text>
-                          <CheckBox
-                            checked={allergeny[key].value}
-                            onPress={() => handleCheckboxChange(key)}
-                          />
-                          <CheckBox
-                            checked={trace[key].value}
-                            onPress={() => handleCheckboxChangeTraces(key)}
-                          />
-                        </View>
-                      ))}
-                    <Button title="Search" onPress={closeModal} />
-                  </View>
-                  
+                          {allergeny[key].english}
+                        </Text>
+                        <CheckBox
+                          checked={allergeny[key].value}
+                          onPress={() => handleCheckboxChange(key)}
+                        />
+                        <CheckBox
+                          checked={trace[key].value}
+                          onPress={() => handleCheckboxChangeTraces(key)}
+                        />
+                      </View>
+                    ))}
+                  <Button title="Search" onPress={closeModal} />
                 </View>
-                
+              </View>
             </ScrollView>
           </Modal>
         </View>

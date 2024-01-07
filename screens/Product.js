@@ -115,6 +115,7 @@ const Product = ({ route, navigation }) => {
         ]
       );
       setproductAllergens(data["product"]["allergens_hierarchy"]);
+      console.log("AAA",productAllergens);
       setproductIngredients(data["product"]["ingredients"]);
       setproductTraces(
         data["product"]["traces"]
@@ -147,7 +148,7 @@ const Product = ({ route, navigation }) => {
           : "N/A"}
       </Text>
       <Text>
-        Allergens:{" "}
+        Allergens:{" "} 
         {productAllergens.length
           ? productAllergens.map((item) => item.replace("en:", "")).join(", ")
           : "N/A"}
