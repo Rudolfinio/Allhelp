@@ -11,11 +11,12 @@ import {
   StatusBar,
   TouchableOpacity,
   Button,
+  TextInput,
 } from "react-native";
 import { StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/FontAwesome5";
-import { Calendar, LocaleConfig } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 const buttonsData = [
   { icon: "angry", value: 1, color: "red" },
   { icon: "sad-tear", value: 2, color: "orange" },
@@ -33,6 +34,11 @@ const StatEat = ({ route, navigation }) => {
   const [notes, setNotes] = useState("");
   const [col, setColor] = useState("");
   const [icon, setIcon] = useState("");
+  const [date, setDate] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedButton, setSelectedButton] = useState(null);
+  const [wellbeinged, setWellbeingEd] = useState("");
+  const [notesed, setNotesEd] = useState("");
   useEffect(() => {
     const fetchDataAll = async () => {
       try {
@@ -47,11 +53,17 @@ const StatEat = ({ route, navigation }) => {
     };
 
     fetchDataAll();
-  }, []);
-  useEffect(() => {
   }, [eaten]);
-  const markedDates = {};
 
+  const markedDates = {};
+  const handleButtonPress = (index) => {
+    setSelectedButton(index);
+    setWellbeingEd(buttonsData[index].value);
+  };
+
+  const handleNotesChange = (text) => {
+    setNotesEd(text);
+  };
   const handleItemPress = (code) => {
     setCodeSel(code);
 
@@ -89,6 +101,75 @@ const StatEat = ({ route, navigation }) => {
     setSelected(null);
     setModalVisible(false);
   };
+  const edit = () => {
+    setNotesEd(eaten.eat[codeSel][date]?.notes);
+    console.log("AAA: ", eaten.eat[codeSel][date]?.wellbeing);
+    setSelectedButton(eaten.eat[codeSel][date]?.wellbeing);
+    setIsEditing(true);
+  };
+  const send = async () => {
+    try {
+      const existingData = await AsyncStorage.getItem("eat");
+      const dd = JSON.parse(existingData);
+
+      dd.eat[codeSel][selected] = {
+        wellbeing: wellbeinged,
+        notes: notesed,
+      };
+
+      await AsyncStorage.setItem("eat", JSON.stringify(dd));
+
+      setEaten(dd);
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error accessing AsyncStorage:", error);
+    }
+    setNotesEd("");
+    setWellbeingEd("");
+  };
+  const deleteDate = () => {
+    const deleteEat = async () => {
+      try {
+        const existingData = await AsyncStorage.getItem("eat");
+        const dd = JSON.parse(existingData);
+
+        // Usuń wybraną datę
+        delete dd.eat[codeSel][date];
+
+        // Aktualizuj selectedDates
+        const updatedSelectedDates = { ...selectedDates };
+        delete updatedSelectedDates[date];
+
+        // Zastosuj zmiany do stanu
+        setSelectedDates(updatedSelectedDates);
+
+        // Jeśli nie ma już dat dla tego produktu, usuń cały wpis
+        const productData = dd.eat[codeSel];
+        const dates = Object.keys(productData).filter(
+          (key) => key !== "productImageSmall" && key !== "productName"
+        );
+        if (dates.length === 0) {
+          delete dd.eat[codeSel];
+        }
+
+        // Zapisz zmiany w AsyncStorage
+        await AsyncStorage.setItem("eat", JSON.stringify(dd));
+
+        // Odśwież widok
+      } catch (error) {
+        console.error("Error accessing AsyncStorage:", error);
+      }
+    };
+
+    deleteEat();
+    handleItemPress(codeSel);
+    setNotes("");
+    setWellbeing("");
+    setColor("white");
+    setIcon("");
+    setSelected(null);
+  };
 
   const info = (date) => {
     const foundObject = buttonsData.find(
@@ -104,7 +185,7 @@ const StatEat = ({ route, navigation }) => {
         ? "Wellbeing: " + eaten.eat[codeSel][date]?.wellbeing
         : ""
     );
-
+    setDate(date);
     setColor(foundObject?.color ? foundObject?.color : "white");
     setIcon(foundObject?.icon ? foundObject?.icon : "");
     console.log(wellbeing);
@@ -161,22 +242,61 @@ const StatEat = ({ route, navigation }) => {
                   },
                 }}
               />
-              <View style={styles.buttonsContainer}>
-                <Text>{wellbeing}</Text>
-                <TouchableOpacity
-                  style={[
-                    styles.button,
-                    {
-                      backgroundColor: col,
-                    },
-                  ]}
-                >
-                  <Icon name={icon} size={24} color="white" />
-                </TouchableOpacity>
-              </View>
+              {isEditing ? null : (
+                <View>
+                  <View style={styles.buttonsContainer}>
+                    <Text>{wellbeing}</Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.button,
+                        {
+                          backgroundColor: col,
+                        },
+                      ]}
+                    >
+                      <Icon name={icon} size={24} color="white" />
+                    </TouchableOpacity>
+                  </View>
 
-              <Text>{notes}</Text>
+                  <Text>{notes}</Text>
+                </View>
+              )}
+              {isEditing && (
+                <View>
+                  <View style={styles.buttonsContainer}>
+                    {buttonsData.map((button, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[
+                          styles.button,
+                          {
+                            backgroundColor: button.color,
+                            opacity:
+                              selectedButton === null ||
+                              selectedButton === index
+                                ? 1
+                                : 0.5,
+                          },
+                        ]}
+                        onPress={() => handleButtonPress(index)}
+                      >
+                        <Icon name={button.icon} size={24} color="white" />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Wpisz notatki..."
+                    multiline
+                    value={notesed}
+                    onChangeText={handleNotesChange}
+                  />
+                  <Button title="wyslij" onPress={send} />
+                </View>
+              )}
               <View style={styles.closeButtonContainer}>
+                <Button title="Edit" onPress={edit} />
+                <Button title="Delete" onPress={deleteDate} />
                 <Button title="Close" onPress={closeModal} />
               </View>
             </View>
@@ -194,7 +314,7 @@ const styles = StyleSheet.create({
   },
   closeButtonContainer: {
     marginTop: 20, // Dodaj margines od góry, aby oddzielić przycisk od innych elementów
-    alignSelf: "center", // Umieść przycisk "Close" na środku ekranu (opcjonalne)
+    //alignSelf: "center", // Umieść przycisk "Close" na środku ekranu (opcjonalne)
   },
   image: {
     width: 100,
@@ -233,6 +353,13 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "white",
     padding: 20,
+  },
+  textInput: {
+    margin: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
   },
 });
 export default StatEat;
