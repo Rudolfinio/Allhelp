@@ -5,9 +5,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
-  Pressable,
   Modal,
-  Alert,
   StatusBar,
   TouchableOpacity,
   Button,
@@ -24,6 +22,7 @@ const buttonsData = [
   { icon: "smile", value: 4, color: "lightgreen" },
   { icon: "grin", value: 5, color: "green" },
 ];
+const feel = ["Very bad", "Bad", "OK", "Good", "Great"];
 const StatEat = ({ route, navigation }) => {
   const [eaten, setEaten] = useState([]);
   const [selected, setSelected] = useState(true);
@@ -55,15 +54,13 @@ const StatEat = ({ route, navigation }) => {
     fetchDataAll();
   }, [eaten]);
 
-  const markedDates = {};
   const handleButtonPress = (index) => {
     setSelectedButton(index);
     setWellbeingEd(buttonsData[index].value);
   };
 
-  const handleNotesChange = (text) => {
-    setNotesEd(text);
-  };
+  const handleNotesChange = (text) => setNotesEd(text);
+
   const handleItemPress = (code) => {
     setCodeSel(code);
 
@@ -103,11 +100,13 @@ const StatEat = ({ route, navigation }) => {
   };
   const edit = () => {
     setNotesEd(eaten.eat[codeSel][date]?.notes);
-    console.log("AAA: ", eaten.eat[codeSel][date]?.wellbeing);
-    setSelectedButton(eaten.eat[codeSel][date]?.wellbeing);
+    const temp = eaten.eat[codeSel][date]?.wellbeing - 1;
+    setSelectedButton(temp);
+    setWellbeingEd(buttonsData[temp].value);
     setIsEditing(true);
   };
   const send = async () => {
+    closeModal();
     try {
       const existingData = await AsyncStorage.getItem("eat");
       const dd = JSON.parse(existingData);
@@ -120,14 +119,15 @@ const StatEat = ({ route, navigation }) => {
       await AsyncStorage.setItem("eat", JSON.stringify(dd));
 
       setEaten(dd);
-
       setIsEditing(false);
     } catch (error) {
       console.error("Error accessing AsyncStorage:", error);
     }
     setNotesEd("");
     setWellbeingEd("");
+    setSelectedButton(null);
   };
+
   const deleteDate = () => {
     const deleteEat = async () => {
       try {
@@ -182,15 +182,12 @@ const StatEat = ({ route, navigation }) => {
     );
     setWellbeing(
       eaten.eat[codeSel][date]?.wellbeing
-        ? "Wellbeing: " + eaten.eat[codeSel][date]?.wellbeing
+        ? "Wellbeing: " + feel[eaten.eat[codeSel][date]?.wellbeing - 1]
         : ""
     );
     setDate(date);
     setColor(foundObject?.color ? foundObject?.color : "white");
     setIcon(foundObject?.icon ? foundObject?.icon : "");
-    console.log(wellbeing);
-    console.log(col);
-    console.log(icon);
   };
 
   return (

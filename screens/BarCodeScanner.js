@@ -23,7 +23,6 @@ export default function App({ navigation }) {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     setText(data);
-    console.log("Type: " + type + "\nData: " + data);
   };
 
   if (hasPermission === null) {
@@ -68,7 +67,7 @@ export default function App({ navigation }) {
           title="Go to Product"
           onPress={() =>
             navigation.navigate("Product", {
-              code: { text },
+              code: { text },fromFilterScreen: false,
             })
           }
         />

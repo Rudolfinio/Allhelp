@@ -10,9 +10,10 @@ import {
   Alert,
   StatusBar,
   Button,
+  StyleSheet
 } from "react-native";
-import { StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CheckBox } from "@rneui/themed";
 
 const Product = ({ route, navigation }) => {
   const [productName, setproductName] = useState(null);
@@ -22,7 +23,6 @@ const Product = ({ route, navigation }) => {
   const [productAllergens, setproductAllergens] = useState([]);
   const [productTraces, setproductTraces] = useState([]);
   const [error, setError] = useState(null);
-  const { code } = route.params;
   const apiUrl = `https://world.openfoodfacts.org/api/v2/product/${
     route.params?.code?.text ? route.params?.code.text : route.params?.code
   }?fields=code,product_name,selected_images,ingredients,allergens_hierarchy,allergens_from_ingredients,traces`;
@@ -30,14 +30,21 @@ const Product = ({ route, navigation }) => {
   const [allergeny, setAllergeny] = useState([]);
   const [Code, setCode] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [checked, setChecked] = useState(false);
+  const [favor, setFavor] = useState(false);
+  const { fromFilterScreen } = route.params.fromFilterScreen;
   useEffect(() => {
-    console.log("Product screen code:", route.params?.code); // Check if the code is logged correctly
 
     const fetchDataAll = async () => {
       try {
         const storedAllergens = await AsyncStorage.getItem("allergens2");
-
+        const existingData = await AsyncStorage.getItem("fav");
+        const parsedData = existingData ? JSON.parse(existingData) : {};
+        if (parsedData.fav != null) {
+          if (parsedData?.fav[route.params?.code]) {
+            setChecked(true);
+          }
+        }
         if (storedAllergens) {
           setAllergeny(JSON.parse(storedAllergens));
         }
@@ -52,12 +59,47 @@ const Product = ({ route, navigation }) => {
   }, [route.params?.code]);
 
   useEffect(() => {
+    const fetchHistory = async () => {
+      //await AsyncStorage.removeItem("history");
+      if (productName != null && productImageSmall != null && Code != null) {
+        try {
+          const storedHistory = await AsyncStorage.getItem("history");
+          const parsedData = storedHistory ? JSON.parse(storedHistory) : {};
+
+          const newData = {
+            his: {
+              ...parsedData.his,
+              [Code]: {
+                ...(parsedData.his && parsedData.his[Code]
+                  ? parsedData.his[Code]
+                  : {}),
+                productName: productName,
+                productImageSmall: productImageSmall,
+              },
+            },
+          };
+
+          await AsyncStorage.setItem("history", JSON.stringify(newData));
+        } catch (error) {
+          console.error("Error accessing AsyncStorage:", error);
+        }
+      }
+    };
+    fetchHistory();
+  }, [productName, productImageSmall, Code]);
+
+  useEffect(() => {
+    if (fromFilterScreen) {
+      navigation.navigate("Home", { refresh: true });
+    }
+  }, [navigation, fromFilterScreen]);
+
+  useEffect(() => {
     if (readed) {
       catchAll();
     }
   }, [productTraces]);
   const catchAll = () => {
-    console.log(allergeny);
     compareObjects(allergeny, productAllergens, productTraces);
   };
   const compareObjects = (allergens, prAllergens, prTraces) => {
@@ -69,7 +111,6 @@ const Product = ({ route, navigation }) => {
       const capitalizedWord = firstLetterCap + remainingLetters;
 
       if (allergens[capitalizedWord] && allergens[capitalizedWord].value) {
-        console.log(`Alergen ${capitalizedWord} jest true`);
         setModalVisible(true);
         return;
       }
@@ -83,7 +124,6 @@ const Product = ({ route, navigation }) => {
       const capitalizedWord = firstLetterCap + remainingLetters;
 
       if (allergens[capitalizedWord] && allergens[capitalizedWord].value) {
-        console.log(`Alergen ${capitalizedWord} jest true`);
         setModalVisible(true);
         return;
       }
@@ -97,7 +137,6 @@ const Product = ({ route, navigation }) => {
       if (!response.ok) {
         throw new Error(`Błąd sieci: ${response.status}`);
       }
-      console.log("Product screen data:", data); // Log the retrieved data
 
       const data = await response.json();
       setproductName(data["product"]["product_name"]);
@@ -115,16 +154,52 @@ const Product = ({ route, navigation }) => {
         ]
       );
       setproductAllergens(data["product"]["allergens_hierarchy"]);
-      console.log("AAA",productAllergens);
       setproductIngredients(data["product"]["ingredients"]);
       setproductTraces(
         data["product"]["traces"]
           .replace(/en:/g, "")
+          .replace(/[^\w\s,]/gi, "")
           .replace(/,/g, ", ")
           .split(", ")
       );
     } catch (error) {
       setError(`Wystąpił błąd: ${error.message}`);
+    }
+  };
+  const toggleCheckbox = async () => {
+    setChecked(!checked);
+    setFavor(!favor);
+    if (checked === false) {
+      try {
+        const existingData = await AsyncStorage.getItem("fav");
+        const parsedData = existingData ? JSON.parse(existingData) : {};
+        const newData = {
+          fav: {
+            ...parsedData.fav,
+            [Code]: {
+              ...(parsedData.fav && parsedData.fav[Code]
+                ? parsedData.fav[Code]
+                : {}),
+              productName: productName,
+              productImageSmall: productImageSmall,
+            },
+          },
+        };
+
+        await AsyncStorage.setItem("fav", JSON.stringify(newData));
+      } catch (error) {
+        console.error("Error adding data:", error);
+      }
+    } else {
+      try {
+        const existingData = await AsyncStorage.getItem("fav");
+        const dd = JSON.parse(existingData);
+
+        delete dd.fav[Code];
+        await AsyncStorage.setItem("fav", JSON.stringify(dd));
+      } catch (error) {
+        console.error("Error accessing AsyncStorage:", error);
+      }
     }
   };
 
@@ -148,20 +223,29 @@ const Product = ({ route, navigation }) => {
           : "N/A"}
       </Text>
       <Text>
-        Allergens:{" "} 
+        Allergens:{" "}
         {productAllergens.length
           ? productAllergens.map((item) => item.replace("en:", "")).join(", ")
           : "N/A"}
       </Text>
       <Text>
         Traces:{" "}
-        {productTraces
+        {productTraces != ""
           ? productTraces.map((item) => item.replace("en:", "")).join(", ")
           : "N/A"}
       </Text>
       <Button
         title="Go to Eat"
-        onPress={() => navigation.navigate("Eat", { Code, productName, productImageSmall })}
+        onPress={() =>
+          navigation.navigate("Eat", { Code, productName, productImageSmall })
+        }
+      />
+      <CheckBox
+        checked={checked}
+        checkedIcon="heart"
+        uncheckedIcon="heart-o"
+        checkedColor="red"
+        onPress={toggleCheckbox}
       />
       <Modal
         animationType="slide"
@@ -196,8 +280,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-
-    //justifyContent: 'center',
   },
   image: {
     // flex: 1,

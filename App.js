@@ -7,10 +7,9 @@ import HomeScreen from "./screens/Home";
 import FiltersScreen from "./screens/Filters";
 import BCScanner from "./screens/BarCodeScanner";
 import Product from "./screens/Product";
-import MyComponent from "./screens/User2";
+import User from "./screens/User";
 import StatEat from "./screens/StatEat";
 import Eat from "./screens/Eat";
-import ButtonList from "./screens/test";
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -20,12 +19,6 @@ function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name="ButtonList"
-          component={ButtonList}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -41,11 +34,11 @@ function App() {
         <Stack.Screen
           name="Product"
           component={Product}
-          options={{ title: "Product's details:", headerShown: false }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="User"
-          component={MyComponent}
+          component={User}
           options={{ headerShown: false }}
         />
         <Stack.Screen

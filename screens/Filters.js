@@ -61,7 +61,7 @@ const FiltersScreen = ({ navigation }) => {
   const [pages, setPages] = useState(null);
 
   const apiUrl = `https://world.openfoodfacts.org/api/v2/search?allergens_tags=${allergensTags}&traces_tags=${tracesTags}&fields=selected_images,product_name,code,allergens_from_ingredients,traces,allergens_tags&sort_by=unique_scans_n&page_size=24&page=${page}`;
-  //zapamietac by zrobic by trace tez szukalo
+
   useEffect(() => {
     setAllergeny(allergen);
     setTraces(traces);
@@ -71,6 +71,7 @@ const FiltersScreen = ({ navigation }) => {
     fetchData(apiUrl);
   }, [allergensTags, tracesTags, page]);
   const fetchData = async (url) => {
+    console.log(apiUrl);
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -84,7 +85,7 @@ const FiltersScreen = ({ navigation }) => {
           ...prevProductData,
           ...data.products,
         ]);
-      }else{
+      } else {
         console.log("1");
 
         setProductData(data.products);
@@ -161,7 +162,7 @@ const FiltersScreen = ({ navigation }) => {
   };
 
   const navigateToProduct = (code) => {
-    navigation.navigate("Product", { code });
+    navigation.navigate("Product", { code, fromFilterScreen: true });
   };
 
   const handleEndReached = () => {
@@ -211,11 +212,6 @@ const FiltersScreen = ({ navigation }) => {
             </View>
           )}
           <Button title="Next" onPress={handleEndReached} />
-
-          <Button
-            title="Go back to Home"
-            onPress={() => navigation.navigate("Home")}
-          />
 
           <Modal
             animationType="slide"
