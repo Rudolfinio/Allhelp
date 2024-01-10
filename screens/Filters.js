@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Button,
   Image,
   ScrollView,
   SafeAreaView,
@@ -11,8 +10,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Header, CheckBox, ListItem } from "@rneui/themed";
+import { Header, CheckBox, ListItem, Button } from "@rneui/themed";
 
 const allergen = {
   Gluten: { english: "Gluten", polish: "Gluten", value: false },
@@ -173,17 +171,18 @@ const FiltersScreen = ({ navigation }) => {
     console.log("??");
   };
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View>
-          <Header
-            rightComponent={{
-              icon: "menu",
-              color: "#fff",
-              onPress: openMenu,
-            }}
-            centerComponent={{ text: "Filters Screen", style: styles.heading }}
-          />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Header
+          backgroundColor="#6b705c"
+          rightComponent={{
+            icon: "menu",
+            color: "#ffe8d6",
+            onPress: openMenu,
+          }}
+          centerComponent={{ text: "Filters", style: styles.head }}
+        />
+        <ScrollView>
           {error ? (
             <Text>Error: {error}</Text>
           ) : (
@@ -191,6 +190,7 @@ const FiltersScreen = ({ navigation }) => {
               {productData.map((product, index) => (
                 <React.Fragment key={index}>
                   <TouchableOpacity
+                    key={index}
                     onPress={() => handleItemPress(product.code)}
                     style={styles.itemContainer}
                   >
@@ -203,7 +203,11 @@ const FiltersScreen = ({ navigation }) => {
                       }}
                       defaultSource={{ uri: "N/A" }}
                     />
-                    <Text>
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={2}
+                      style={styles.listText}
+                    >
                       {product.product_name ? product.product_name : "N/A"}
                     </Text>
                   </TouchableOpacity>
@@ -211,7 +215,31 @@ const FiltersScreen = ({ navigation }) => {
               ))}
             </View>
           )}
-          <Button title="Next" onPress={handleEndReached} />
+          <Button
+            title="Next"
+            buttonStyle={{
+              flex: 1,
+              backgroundColor: "#6b705c",
+              padding: 13,
+              borderWidth: 0,
+              borderColor: "transparent",
+              borderTopRightRadius: 15,
+              borderTopLeftRadius: 15,
+              marginTop: 10,
+            }}
+            onPress={handleEndReached}
+          >
+            <Text
+              style={{
+                color: "#ffe8d6",
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: 16,
+              }}
+            >
+              Next
+            </Text>
+          </Button>
 
           <Modal
             animationType="slide"
@@ -231,13 +259,34 @@ const FiltersScreen = ({ navigation }) => {
                       paddingHorizontal: 10,
                     }}
                   >
-                    <Text style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}>
+                    <Text
+                      style={{
+                        fontWeight: "800",
+                        flex: 1,
+                        fontSize: 17,
+                        color: "#3f4238",
+                      }}
+                    >
                       Name
                     </Text>
-                    <Text style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}>
+                    <Text
+                      style={{
+                        fontWeight: "800",
+                        flex: 1,
+                        fontSize: 17,
+                        color: "#3f4238",
+                      }}
+                    >
                       Allergen
                     </Text>
-                    <Text style={{ fontWeight: "bold", flex: 1, fontSize: 17 }}>
+                    <Text
+                      style={{
+                        fontWeight: "800",
+                        flex: 1,
+                        fontSize: 17,
+                        color: "#3f4238",
+                      }}
+                    >
                       Traces
                     </Text>
                   </View>
@@ -258,6 +307,9 @@ const FiltersScreen = ({ navigation }) => {
                             flex: 1,
                             marginRight: 5,
                             fontWeight: "bold",
+                            color: "#6b705c",
+                            fontWeight: "700",
+                            fontSize: 15,
                           }}
                         >
                           {allergeny[key].english}
@@ -265,20 +317,49 @@ const FiltersScreen = ({ navigation }) => {
                         <CheckBox
                           checked={allergeny[key].value}
                           onPress={() => handleCheckboxChange(key)}
+                          wrapperStyle={{ backgroundColor: "#ddbea9" }}
+                          containerStyle={{ backgroundColor: "#ddbea9" }}
+                          checkedColor="#6b705c"
+                          uncheckedColor="#bc6c25"
                         />
                         <CheckBox
                           checked={trace[key].value}
                           onPress={() => handleCheckboxChangeTraces(key)}
+                          wrapperStyle={{ backgroundColor: "#ddbea9" }}
+                          containerStyle={{ backgroundColor: "#ddbea9" }}
+                          checkedColor="#6b705c"
+                          uncheckedColor="#bc6c25"
                         />
                       </View>
                     ))}
-                  <Button title="Search" onPress={closeModal} />
+                  <Button
+                    onPress={closeModal}
+                    buttonStyle={{
+                      backgroundColor: "#6b705c",
+                      borderWidth: 0,
+                      borderColor: "transparent",
+                      borderRadius: 15,
+                      width: 150,
+                      height: 40,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#ffe8d6",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        fontSize: 16,
+                      }}
+                    >
+                      Close
+                    </Text>
+                  </Button>
                 </View>
               </View>
             </ScrollView>
           </Modal>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -288,45 +369,56 @@ export default FiltersScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffe8d6",
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  listItem: {
-    marginVertical: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    backgroundColor: "#ffffff", // Dostosuj kolor tła
-    borderBottomWidth: 1,
-    borderBottomColor: "#dcdcdc", // Dostosuj kolor obramowania
   },
   image: {
     width: 100,
-    height: 100,
+    height: 90,
     resizeMode: "contain",
     justifyContent: "center",
     marginRight: 10,
   },
   itemContainer: {
-    backgroundColor: "#455561",
+    backgroundColor: "#ddbea9",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginTop: 5,
+    height: 100,
+    borderRadius: 10,
+  },
+  listText: {
+    color: "#6b705c",
+    fontWeight: "bold",
+    fontSize: 16,
+    width: "72%",
+  },
+  scrollViewContainer: {
+    flex: 1,
+    marginBottom: 45,
   },
   heading: {
     fontSize: 18,
     color: "#fff",
   },
+  header: {
+    backgroundColor: "#6b705c",
+  },
+  head: {
+    color: "#ffe8d6",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContent: {
     width: "70%",
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: "#ddbea9",
     padding: 20,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,

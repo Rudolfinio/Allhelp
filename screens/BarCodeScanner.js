@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Button, StatusBar } from "react-native";
+import { StyleSheet, View, Text, StatusBar } from "react-native";
 import { BarCodePoint, BarCodeScanner } from "expo-barcode-scanner";
 import { Product, handleBarCodeRead } from "./Product";
+import { Header, Button } from "@rneui/themed";
 
 // const BCScanner = ({ navigation }) =>
 export default function App({ navigation }) {
@@ -47,31 +48,75 @@ export default function App({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.barcodebox}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ height: 400, width: 400 }}
-        />
+      <Header
+        backgroundColor="#6b705c"
+        centerComponent={{ text: "Camera", style: styles.head }}
+      />
+      <View style={styles.container}>
+        <View style={styles.barcodebox}>
+          <BarCodeScanner
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            style={{ height: 400, width: 400 }}
+          />
+        </View>
+        <Text style={styles.maintext}>{text}</Text>
+        <View style={{ flexDirection: "row", marginTop: 20 }}>
+          {scanned && (
+            <Button
+              onPress={() => setScanned(false)}
+              buttonStyle={{
+                backgroundColor: "#cb997e",
+                borderWidth: 0,
+                borderColor: "transparent",
+                borderRadius: 15,
+                width: 150,
+                height: 40,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#ffe8d6",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 16,
+                }}
+              >
+                Scan again?
+              </Text>
+            </Button>
+          )}
+          {scanned && (
+            <Button
+              onPress={() =>
+                navigation.navigate("Product", {
+                  code: { text },
+                  fromFilterScreen: false,
+                })
+              }
+              buttonStyle={{
+                backgroundColor: "#6b705c",
+                borderWidth: 0,
+                borderColor: "transparent",
+                borderRadius: 15,
+                width: 150,
+                height: 40,
+                marginLeft:20,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#ffe8d6",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 16,
+                }}
+              >
+                Go to Product
+              </Text>
+            </Button>
+          )}
+        </View>
       </View>
-      <Text style={styles.maintext}>{text}</Text>
-
-      {scanned && (
-        <Button
-          title={"Scan again?"}
-          onPress={() => setScanned(false)}
-          color="tomato"
-        />
-      )}
-      {scanned && (
-        <Button
-          title="Go to Product"
-          onPress={() =>
-            navigation.navigate("Product", {
-              code: { text },fromFilterScreen: false,
-            })
-          }
-        />
-      )}
     </View>
   );
 }
@@ -79,12 +124,19 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffe8d6",
     alignItems: "center",
-    justifyContent: "center",    
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+    justifyContent: "center",
+  },
+  containerCam: {
+    flex: 1,
+    backgroundColor: "#ffe8d6",
+    alignItems: "center",
+    justifyContent: "center",
   },
   maintext: {
+    color: "#6b705c",
+    fontWeight: "bold",
     fontSize: 16,
     margin: 20,
   },
@@ -96,5 +148,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 30,
     backgroundColor: "tomato",
+  },
+  head: {
+    color: "#ffe8d6",
+    fontWeight: "bold",
+    fontSize: 20,
   },
 });

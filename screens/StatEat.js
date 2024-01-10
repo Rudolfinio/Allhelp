@@ -3,18 +3,19 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
   SafeAreaView,
   Modal,
   StatusBar,
   TouchableOpacity,
-  Button,
   TextInput,
 } from "react-native";
 import { StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Calendar } from "react-native-calendars";
+import { Header, Button } from "@rneui/themed";
+import { color } from "@rneui/base";
+
 const buttonsData = [
   { icon: "angry", value: 1, color: "red" },
   { icon: "sad-tear", value: 2, color: "orange" },
@@ -166,7 +167,7 @@ const StatEat = ({ route, navigation }) => {
     handleItemPress(codeSel);
     setNotes("");
     setWellbeing("");
-    setColor("white");
+    setColor("#ffe8d6");
     setIcon("");
     setSelected(null);
   };
@@ -176,24 +177,25 @@ const StatEat = ({ route, navigation }) => {
       (item) => item.value === eaten.eat[codeSel][date]?.wellbeing
     );
     setNotes(
-      eaten.eat[codeSel][date]?.notes
-        ? "Notes: " + eaten.eat[codeSel][date]?.notes
-        : ""
+      eaten.eat[codeSel][date]?.notes ? eaten.eat[codeSel][date]?.notes : ""
     );
     setWellbeing(
       eaten.eat[codeSel][date]?.wellbeing
-        ? "Wellbeing: " + feel[eaten.eat[codeSel][date]?.wellbeing - 1]
+        ? feel[eaten.eat[codeSel][date]?.wellbeing - 1]
         : ""
     );
     setDate(date);
-    setColor(foundObject?.color ? foundObject?.color : "white");
+    setColor(foundObject?.color ? foundObject?.color : "#ffe8d6");
     setIcon(foundObject?.icon ? foundObject?.icon : "");
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <Text>StatEat Screen</Text>
+        <Header
+          backgroundColor="#6b705c"
+          centerComponent={{ text: "Statistics", style: styles.head }}
+        />
 
         {eaten.eat &&
           Object.keys(eaten.eat).map((code) => {
@@ -209,7 +211,11 @@ const StatEat = ({ route, navigation }) => {
                   source={{ uri: productData.productImageSmall }}
                   defaultSource={{ uri: "N/A" }}
                 />
-                <Text>
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={styles.listText}
+                >
                   {productData.productName ? productData.productName : "N/A"}
                 </Text>
               </TouchableOpacity>
@@ -224,6 +230,23 @@ const StatEat = ({ route, navigation }) => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Calendar
+                theme={{
+                  backgroundColor: "#ffe8d6",
+                  calendarBackground: "#ffe8d6",
+                  selectedDayBackgroundColor: "#6b705c",
+                  selectedDayTextColor: "#ffffff",
+                  todayTextColor: "blue",
+                  dayTextColor: "#6b705c",
+                  arrowColor: "#6b705c",
+                  monthTextColor: "#6b705c",
+                  textDayFontSize: 16,
+                  textMonthFontSize: 20,
+                  textMonthFontWeight: "bold",
+                  textDayFontWeight: "bold",
+                  textDayHeaderFontSize: 16,
+                  textSectionTitleColor: "#a5a58d",            
+                  textDisabledColor: "#ddbea9",
+                }}
                 onDayPress={(day) => {
                   setSelected(day.dateString);
                   info(day.dateString);
@@ -242,7 +265,10 @@ const StatEat = ({ route, navigation }) => {
               {isEditing ? null : (
                 <View>
                   <View style={styles.buttonsContainer}>
-                    <Text>{wellbeing}</Text>
+                    <Text style={[styles.textD, (textAlign = "left")]}>
+                      {wellbeing && "Wellbeing: "}
+                      <Text style={styles.desc}>{wellbeing}</Text>
+                    </Text>
                     <TouchableOpacity
                       style={[
                         styles.button,
@@ -255,7 +281,10 @@ const StatEat = ({ route, navigation }) => {
                     </TouchableOpacity>
                   </View>
 
-                  <Text>{notes}</Text>
+                  <Text style={[styles.textD, (textAlign = "left")]}>                   
+                    {notes && "Notes: "}
+                    <Text style={styles.desc}>{notes}</Text>
+                  </Text>
                 </View>
               )}
               {isEditing && (
@@ -288,14 +317,67 @@ const StatEat = ({ route, navigation }) => {
                     value={notesed}
                     onChangeText={handleNotesChange}
                   />
-                  <Button title="wyslij" onPress={send} />
+
+                  <Button
+                    buttonStyle={{
+                      backgroundColor: "#b98b73",
+                      borderWidth: 0,
+                      borderColor: "transparent",
+                      borderRadius: 15,
+                    }}
+                    onPress={send}
+                  >
+                    <Text
+                      style={{
+                        color: "#ffe8d6",
+                        textAlign: "center",
+                        fontWeight: "800",
+                        fontSize: 18,
+                      }}
+                    >
+                      Save
+                    </Text>{" "}
+                  </Button>
                 </View>
               )}
-              <View style={styles.closeButtonContainer}>
-                <Button title="Edit" onPress={edit} />
-                <Button title="Delete" onPress={deleteDate} />
-                <Button title="Close" onPress={closeModal} />
-              </View>
+              {wellbeing && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 20,
+                    justifyContent: "space-evenly",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    buttonStyle={{
+                      backgroundColor: "#6b705c",
+                      borderWidth: 0,
+                      borderColor: "transparent",
+                      borderRadius: 15,
+                      width: 100,
+                      height: 40,
+                    }}
+                    onPress={edit}
+                  >
+                    <Text style={styles.buttonText}>Edit</Text>
+                  </Button>
+                  <Button
+                    buttonStyle={{
+                      backgroundColor: "#6b705c",
+                      borderWidth: 0,
+                      borderColor: "transparent",
+                      borderRadius: 15,
+                      width: 100,
+                      height: 40,
+                      marginLeft: 20,
+                    }}
+                    onPress={deleteDate}
+                  >
+                    <Text style={styles.buttonText}>Delete</Text>
+                  </Button>
+                </View>
+              )}
             </View>
           </View>
         </Modal>
@@ -306,23 +388,21 @@ const StatEat = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: "#ffe8d6",
   },
   closeButtonContainer: {
-    marginTop: 20, // Dodaj margines od góry, aby oddzielić przycisk od innych elementów
-    //alignSelf: "center", // Umieść przycisk "Close" na środku ekranu (opcjonalne)
+    marginTop: 20,
   },
   image: {
     width: 100,
-    height: 100,
+    height: 90,
     resizeMode: "contain",
     justifyContent: "center",
     marginRight: 10,
   },
   buttonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    // justifyContent: "space-evenly",
     alignItems: "center",
     marginTop: 20,
   },
@@ -332,31 +412,64 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 5,
+    marginLeft: 25,
   },
   itemContainer: {
-    backgroundColor: "#455561",
+    backgroundColor: "#ddbea9",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginTop: 5,
+    borderRadius: 10,
+    height: 100,
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContent: {
     width: "100%",
-    height: "100%",
-    backgroundColor: "white",
+    //height: "100%",
+    backgroundColor: "#ffe8d6",
     padding: 20,
   },
   textInput: {
     margin: 20,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#cb997e",
     borderRadius: 5,
+    color: "#6b705c",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  head: {
+    color: "#ffe8d6",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  listText: {
+    color: "#6b705c",
+    fontWeight: "bold",
+    fontSize: 16,
+    width: "72%",
+  },
+  buttonText: {
+    color: "#ffe8d6",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  textD: {
+    color: "#6b705c",
+    fontWeight: "900",
+    fontSize: 16,
+  },
+  desc: {
+    color: "#6b705c",
+    fontWeight: "500",
+    fontSize: 16,
   },
 });
 export default StatEat;

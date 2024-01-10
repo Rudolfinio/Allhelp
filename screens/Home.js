@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   itemContainer: {
+    height: 100,
     backgroundColor: "#ddbea9",
     flexDirection: "row",
     alignItems: "center",
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flex: 1,
-    marginBottom: 45, // Adjust this value to create space for the buttons
+    marginBottom: 60,
   },
   image: {
     width: 100,
@@ -202,6 +203,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     justifyContent: "center",
     marginRight: 10,
+    overflow: 'hidden',
   },
   bottomButtons: {
     flexDirection: "row",

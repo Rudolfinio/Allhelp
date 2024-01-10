@@ -10,10 +10,12 @@ import {
   Alert,
   StatusBar,
   Button,
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CheckBox } from "@rneui/themed";
+import { CheckBox, Header } from "@rneui/themed";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 const Product = ({ route, navigation }) => {
   const [productName, setproductName] = useState(null);
@@ -34,7 +36,6 @@ const Product = ({ route, navigation }) => {
   const [favor, setFavor] = useState(false);
   const { fromFilterScreen } = route.params.fromFilterScreen;
   useEffect(() => {
-
     const fetchDataAll = async () => {
       try {
         const storedAllergens = await AsyncStorage.getItem("allergens2");
@@ -141,13 +142,17 @@ const Product = ({ route, navigation }) => {
       const data = await response.json();
       setproductName(data["product"]["product_name"]);
       setCode(data["product"]["code"]);
-      data["product"]["selected_images"]["front"]["display"]["pl"]
-        ? setproductImage(
-            data["product"]["selected_images"]["front"]["display"]["pl"]
-          )
-        : setproductImage(
-            data["product"]["selected_images"]["front"]["display"]["en"]
-          );
+      setproductImage(
+        data["product"]["selected_images"]["front"]["display"]["pl"]
+          ? data["product"]["selected_images"]["front"]["display"]["pl"]
+          : data["product"]["selected_images"]["front"]["display"]["en"]
+          ? data["product"]["selected_images"]["front"]["display"]["en"]
+          : data["product"]["selected_images"]["front"]["display"][
+              Object.keys(
+                data["product"]["selected_images"]["front"]["display"]
+              )[0]
+            ]
+      );
       setproductImageSmall(
         data.product.selected_images?.front?.small[
           Object.keys(data.product.selected_images.front.small)[0]
@@ -205,6 +210,42 @@ const Product = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Header
+        backgroundColor="#6b705c"
+        leftComponent={
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Eat", {
+                Code,
+                productName,
+                productImageSmall,
+              })
+            }
+            style={{ marginTop: 5 }}
+          >
+            <Icon
+              name="utensils"
+              size={25}
+              color="#ffe8d6"
+              style={{ marginTop: 15 }}
+            />
+          </TouchableOpacity>
+        }
+        centerComponent={{ text: "Product", style: styles.head }}
+        rightComponent={
+          <CheckBox
+            checked={checked}
+            checkedIcon="heart"
+            uncheckedIcon="heart-o"
+            checkedColor="red"
+            onPress={toggleCheckbox}
+            textStyle={{ backgroundColor: "#6b705c", color: "#ffe8d6" }}
+            wrapperStyle={{ backgroundColor: "#6b705c" }}
+            containerStyle={{ backgroundColor: "#6b705c" }}
+            uncheckedColor="#ffe8d6"
+          />
+        }
+      />
       {productImage ? (
         <Image
           style={styles.image}
@@ -213,40 +254,35 @@ const Product = ({ route, navigation }) => {
           transition={1000}
         />
       ) : (
-        <Text>There is no polish or english image for this product</Text>
+        <Text style={styles.noImageText}>
+          No image available for this product."{" "}
+        </Text>
       )}
-      <Text>Name: {productName ? productName : "N/A"}</Text>
-      <Text>
-        Ingredients:{" "}
-        {productIngredients
-          ? productIngredients.map((item) => item.text).join(", ")
-          : "N/A"}
-      </Text>
-      <Text>
-        Allergens:{" "}
-        {productAllergens.length
-          ? productAllergens.map((item) => item.replace("en:", "")).join(", ")
-          : "N/A"}
-      </Text>
-      <Text>
-        Traces:{" "}
-        {productTraces != ""
-          ? productTraces.map((item) => item.replace("en:", "")).join(", ")
-          : "N/A"}
-      </Text>
-      <Button
-        title="Go to Eat"
-        onPress={() =>
-          navigation.navigate("Eat", { Code, productName, productImageSmall })
-        }
-      />
-      <CheckBox
-        checked={checked}
-        checkedIcon="heart"
-        uncheckedIcon="heart-o"
-        checkedColor="red"
-        onPress={toggleCheckbox}
-      />
+      <View style={styles.productDetailsContainer}>
+        <Text style={styles.desc}>
+          <Text style={styles.stylePr}>Name:</Text>{" "}
+          {productName ? productName : "N/A"}
+        </Text>
+        <Text style={styles.desc}>
+          <Text style={styles.stylePr}>Ingredients:</Text>{" "}
+          {productIngredients
+            ? productIngredients.map((item) => item.text).join(", ")
+            : "N/A"}
+        </Text>
+        <Text style={styles.desc}>
+          <Text style={styles.stylePr}>Allergens:</Text>{" "}
+          {productAllergens.length
+            ? productAllergens.map((item) => item.replace("en:", "")).join(", ")
+            : "N/A"}
+        </Text>
+        <Text style={styles.desc}>
+          <Text style={styles.stylePr}>Traces:</Text>{" "}
+          {productTraces != ""
+            ? productTraces.map((item) => item.replace("en:", "")).join(", ")
+            : "N/A"}
+        </Text>
+      </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -258,10 +294,10 @@ const Product = ({ route, navigation }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Waring!</Text>
+            <Text style={[styles.modalText, { fontSize: 25 }]}>Waring!</Text>
             <Text style={styles.modalText}>Detected one or more allergens</Text>
             <Pressable
-              style={[styles.button, styles.buttonClose]}
+              style={[styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}
             >
               <Text style={styles.textStyle}>OK</Text>
@@ -277,12 +313,10 @@ export default Product;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffe8d6",
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   image: {
-    // flex: 1,
     width: 300,
     height: 250,
     resizeMode: "contain",
@@ -297,7 +331,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "#ddbea9",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -310,24 +344,53 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
   buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
+    backgroundColor: "#6b705c",
+    borderWidth: 0,
+    borderColor: "transparent",
+    borderRadius: 15,
+    width: 150,
+    elevation: 2,
+    height: 40,
   },
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+    fontWeight: "800",
+    color: "#da5872",
+    fontSize: 20,
+  },
+  textStyle: {
+    color: "#ffe8d6",
+    textAlign: "center",
+    marginTop: 8,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  head: {
+    color: "#ffe8d6",
+    fontWeight: "bold",
+    fontSize: 20,
+    marginTop: 15,
+  },
+  stylePr: {
+    color: "#6b705c",
+    fontWeight: "900",
+    fontSize: 17,
+  },
+  desc: {
+    color: "#6b705c",
+    fontWeight: "500",
+    fontSize: 16,
+  },
+  noImageText: {
+    marginTop: 10,
+    color: "#6b705c",
+    fontSize: 16,
+  },
+  productDetailsContainer: {
+    flex: 1,
+    margin: 10,
+    alignItems: "left",
   },
 });
