@@ -211,7 +211,7 @@ const Product = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Header
-        backgroundColor="#6b705c"
+        backgroundColor="#F5F5F5"
         leftComponent={
           <TouchableOpacity
             onPress={() =>
@@ -226,7 +226,7 @@ const Product = ({ route, navigation }) => {
             <Icon
               name="utensils"
               size={25}
-              color="#ffe8d6"
+              color="#292828"
               style={{ marginTop: 15 }}
             />
           </TouchableOpacity>
@@ -239,10 +239,10 @@ const Product = ({ route, navigation }) => {
             uncheckedIcon="heart-o"
             checkedColor="red"
             onPress={toggleCheckbox}
-            textStyle={{ backgroundColor: "#6b705c", color: "#ffe8d6" }}
-            wrapperStyle={{ backgroundColor: "#6b705c" }}
-            containerStyle={{ backgroundColor: "#6b705c" }}
-            uncheckedColor="#ffe8d6"
+            textStyle={{ backgroundColor: "#F5F5F5", color: "#ffe8d6" }}
+            wrapperStyle={{ backgroundColor: "#F5F5F5" }}
+            containerStyle={{ backgroundColor: "#F5F5F5" }}
+            uncheckedColor="#292828"
           />
         }
       />
@@ -313,7 +313,7 @@ export default Product;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
     alignItems: "center",
   },
   image: {
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#ddbea9",
+    backgroundColor: "#F5F5F5",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonClose: {
-    backgroundColor: "#6b705c",
+    backgroundColor: "#0073e6",
     borderWidth: 0,
     borderColor: "transparent",
     borderRadius: 15,
@@ -361,25 +361,25 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   textStyle: {
-    color: "#ffe8d6",
+    color: "white",
     textAlign: "center",
     marginTop: 8,
     fontWeight: "bold",
     fontSize: 16,
   },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
     marginTop: 15,
   },
   stylePr: {
-    color: "#6b705c",
-    fontWeight: "900",
+    color: "#424141",
+    fontWeight: "700",
     fontSize: 17,
   },
   desc: {
-    color: "#6b705c",
+    color: "#424141",
     fontWeight: "500",
     fontSize: 16,
   },

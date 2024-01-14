@@ -17,11 +17,11 @@ import { Header, Button } from "@rneui/themed";
 import { color } from "@rneui/base";
 
 const buttonsData = [
-  { icon: "angry", value: 1, color: "red" },
-  { icon: "sad-tear", value: 2, color: "orange" },
-  { icon: "meh", value: 3, color: "#FFD700" },
-  { icon: "smile", value: 4, color: "lightgreen" },
-  { icon: "grin", value: 5, color: "green" },
+  { icon: "angry", value: 1, color: "#F5F5F5" },
+  { icon: "sad-tear", value: 2, color: "#F5F5F5" },
+  { icon: "meh", value: 3, color: "#F5F5F5" },
+  { icon: "smile", value: 4, color: "#F5F5F5" },
+  { icon: "grin", value: 5, color: "#F5F5F5" },
 ];
 const feel = ["Very bad", "Bad", "OK", "Good", "Great"];
 const StatEat = ({ route, navigation }) => {
@@ -39,6 +39,7 @@ const StatEat = ({ route, navigation }) => {
   const [selectedButton, setSelectedButton] = useState(null);
   const [wellbeinged, setWellbeingEd] = useState("");
   const [notesed, setNotesEd] = useState("");
+  const [widthF, setWidthF] = useState(0);
   useEffect(() => {
     const fetchDataAll = async () => {
       try {
@@ -77,7 +78,7 @@ const StatEat = ({ route, navigation }) => {
       );
       selected[date] = {
         marked: true,
-        dotColor: foundObject.color,
+        dotColor: "black",
         selectedDotColor: "blue",
         disableTouchEvent: false,
       };
@@ -167,7 +168,7 @@ const StatEat = ({ route, navigation }) => {
     handleItemPress(codeSel);
     setNotes("");
     setWellbeing("");
-    setColor("#ffe8d6");
+    setColor("");
     setIcon("");
     setSelected(null);
   };
@@ -184,8 +185,9 @@ const StatEat = ({ route, navigation }) => {
         ? feel[eaten.eat[codeSel][date]?.wellbeing - 1]
         : ""
     );
+    //setWidthF(2);
     setDate(date);
-    setColor(foundObject?.color ? foundObject?.color : "#ffe8d6");
+    setColor(foundObject?.color ? "foundObject?.color" : "#F5F5F5");
     setIcon(foundObject?.icon ? foundObject?.icon : "");
   };
 
@@ -193,11 +195,11 @@ const StatEat = ({ route, navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Header
-          backgroundColor="#6b705c"
+          backgroundColor="#F5F5F5"
           centerComponent={{ text: "Statistics", style: styles.head }}
         />
-
-        {eaten.eat &&
+        {(eaten.eat &&
+          Object.keys(eaten.eat).length != 0 &&
           Object.keys(eaten.eat).map((code) => {
             const productData = eaten.eat[code];
             return (
@@ -220,7 +222,19 @@ const StatEat = ({ route, navigation }) => {
                 </Text>
               </TouchableOpacity>
             );
-          })}
+          })) || (
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: 50,
+              color: "#212529",
+              fontWeight: "800",
+              fontSize: 20,
+            }}
+          >
+            There is nothing to see here...
+          </Text>
+        )}
         <Modal
           animationType="slide"
           transparent={true}
@@ -231,21 +245,21 @@ const StatEat = ({ route, navigation }) => {
             <View style={styles.modalContent}>
               <Calendar
                 theme={{
-                  backgroundColor: "#ffe8d6",
-                  calendarBackground: "#ffe8d6",
-                  selectedDayBackgroundColor: "#6b705c",
+                  backgroundColor: "#F5F5F5",
+                  calendarBackground: "#F5F5F5",
+                  selectedDayBackgroundColor: "blue",
                   selectedDayTextColor: "#ffffff",
                   todayTextColor: "blue",
-                  dayTextColor: "#6b705c",
-                  arrowColor: "#6b705c",
-                  monthTextColor: "#6b705c",
+                  dayTextColor: "#424141",
+                  arrowColor: "#424141",
+                  monthTextColor: "#424141",
                   textDayFontSize: 16,
                   textMonthFontSize: 20,
                   textMonthFontWeight: "bold",
                   textDayFontWeight: "bold",
                   textDayHeaderFontSize: 16,
-                  textSectionTitleColor: "#a5a58d",            
-                  textDisabledColor: "#ddbea9",
+                  textSectionTitleColor: "#424141",
+                  textDisabledColor: "#999e9e",
                 }}
                 onDayPress={(day) => {
                   setSelected(day.dateString);
@@ -264,8 +278,8 @@ const StatEat = ({ route, navigation }) => {
               />
               {isEditing ? null : (
                 <View>
-                  <View style={styles.buttonsContainer}>
-                    <Text style={[styles.textD, (textAlign = "left")]}>
+                  <View style={styles.buttonsContainer2}>
+                    <Text style={[styles.textD]}>
                       {wellbeing && "Wellbeing: "}
                       <Text style={styles.desc}>{wellbeing}</Text>
                     </Text>
@@ -274,14 +288,16 @@ const StatEat = ({ route, navigation }) => {
                         styles.button,
                         {
                           backgroundColor: col,
+                          marginLeft: 50,
+                          borderWidth: wellbeing ? 2 : 0,
                         },
                       ]}
                     >
-                      <Icon name={icon} size={24} color="white" />
+                      <Icon name={icon} size={24} color="black" />
                     </TouchableOpacity>
                   </View>
 
-                  <Text style={[styles.textD, (textAlign = "left")]}>                   
+                  <Text style={[styles.textD, (textAlign = "left")]}>
                     {notes && "Notes: "}
                     <Text style={styles.desc}>{notes}</Text>
                   </Text>
@@ -302,11 +318,12 @@ const StatEat = ({ route, navigation }) => {
                               selectedButton === index
                                 ? 1
                                 : 0.5,
+                            borderWidth: button ? 2 : 0,
                           },
                         ]}
                         onPress={() => handleButtonPress(index)}
                       >
-                        <Icon name={button.icon} size={24} color="white" />
+                        <Icon name={button.icon} size={24} color="black" />
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -320,7 +337,7 @@ const StatEat = ({ route, navigation }) => {
 
                   <Button
                     buttonStyle={{
-                      backgroundColor: "#b98b73",
+                      backgroundColor: "#2546f0",
                       borderWidth: 0,
                       borderColor: "transparent",
                       borderRadius: 15,
@@ -329,7 +346,7 @@ const StatEat = ({ route, navigation }) => {
                   >
                     <Text
                       style={{
-                        color: "#ffe8d6",
+                        color: "white",
                         textAlign: "center",
                         fontWeight: "800",
                         fontSize: 18,
@@ -340,7 +357,7 @@ const StatEat = ({ route, navigation }) => {
                   </Button>
                 </View>
               )}
-              {wellbeing && (
+              {wellbeing && !isEditing && (
                 <View
                   style={{
                     flexDirection: "row",
@@ -351,7 +368,7 @@ const StatEat = ({ route, navigation }) => {
                 >
                   <Button
                     buttonStyle={{
-                      backgroundColor: "#6b705c",
+                      backgroundColor: "#0073e6",
                       borderWidth: 0,
                       borderColor: "transparent",
                       borderRadius: 15,
@@ -364,7 +381,7 @@ const StatEat = ({ route, navigation }) => {
                   </Button>
                   <Button
                     buttonStyle={{
-                      backgroundColor: "#6b705c",
+                      backgroundColor: "#0073e6",
                       borderWidth: 0,
                       borderColor: "transparent",
                       borderRadius: 15,
@@ -388,7 +405,7 @@ const StatEat = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
   },
   closeButtonContainer: {
     marginTop: 20,
@@ -402,9 +419,16 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  buttonsContainer2: {
+    flexDirection: "row",
     // justifyContent: "space-evenly",
     alignItems: "center",
     marginTop: 20,
+    marginRight: 50,
   },
   button: {
     justifyContent: "center",
@@ -412,15 +436,25 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 5,
-    marginLeft: 25,
+    borderColor: "black",
+    //borderWidth: widthF,
   },
   itemContainer: {
-    backgroundColor: "#ddbea9",
+    height: 100,
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
     borderRadius: 10,
-    height: 100,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   modalContainer: {
     flex: 1,
@@ -431,43 +465,44 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "100%",
     //height: "100%",
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#F5F5F5",
     padding: 20,
   },
   textInput: {
     margin: 20,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#cb997e",
+    borderColor: "#424141",
     borderRadius: 5,
-    color: "#6b705c",
-    fontWeight: "700",
+    color: "#424141",
+    fontWeight: "500",
     fontSize: 16,
   },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
   },
   listText: {
-    color: "#6b705c",
+    color: "#424141",
     fontWeight: "bold",
     fontSize: 16,
     width: "72%",
   },
   buttonText: {
-    color: "#ffe8d6",
+    color: "white",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
   },
   textD: {
-    color: "#6b705c",
-    fontWeight: "900",
+    color: "#424141",
+    fontWeight: "700",
     fontSize: 16,
+    textAlign: "left",
   },
   desc: {
-    color: "#6b705c",
+    color: "#424141",
     fontWeight: "500",
     fontSize: 16,
   },

@@ -22,11 +22,13 @@ const HomeScreen = ({ route, navigation }) => {
     try {
       const existingData = await AsyncStorage.getItem("fav");
       const parsedData = existingData ? JSON.parse(existingData) : {};
+      setProductData(parsedData);
       if (parsedData.fav != null) {
         setProductData(parsedData.fav);
       }
       const existingData2 = await AsyncStorage.getItem("history");
       const parsedData2 = existingData2 ? JSON.parse(existingData2) : {};
+      setLastSearch(parsedData2);
       if (parsedData2.his != null) {
         setLastSearch(parsedData2.his);
       }
@@ -43,7 +45,9 @@ const HomeScreen = ({ route, navigation }) => {
       }
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [navigation, refresh]);
   useEffect(() => {
     fetchFav();
@@ -61,12 +65,13 @@ const HomeScreen = ({ route, navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Header
-          backgroundColor="#6b705c"
+          backgroundColor="#F5F5F5"
           centerComponent={{ text: "Home", style: styles.head }}
         />
         <ScrollView>
           <View style={styles.scrollViewContainer}>
             <Text style={styles.sections}>Favourites</Text>
+
             {productData &&
               Object.keys(productData).map((code) => {
                 const product = productData[code];
@@ -93,6 +98,19 @@ const HomeScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 );
               })}
+
+            {Object.keys(productData).length === 0 && (
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#212529",
+                  fontWeight: "800",
+                  fontSize: 15,
+                }}
+              >
+                Add your first product to favourites!
+              </Text>
+            )}
             <Text style={styles.sections}>History</Text>
             {lastSearch &&
               Object.keys(lastSearch)
@@ -123,6 +141,18 @@ const HomeScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                   );
                 })}
+            {Object.keys(lastSearch).length === 0 && (
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#212529",
+                  fontWeight: "800",
+                  fontSize: 15,
+                }}
+              >
+                Your search history will be here!
+              </Text>
+            )}
           </View>
         </ScrollView>
 
@@ -160,34 +190,40 @@ const HomeScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
     // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   itemContainer: {
     height: 100,
-    backgroundColor: "#ddbea9",
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 5,
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   listText: {
-    color: "#6b705c",
+    color: "#424141",
     fontWeight: "bold",
     fontSize: 16,
     width: "60%",
   },
-  header: {
-    backgroundColor: "#6b705c",
-  },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
   },
   sections: {
     marginTop: 10,
-    color: "#6b705c",
+    color: "#292828",
     fontWeight: "800",
     textAlign: "center",
     fontSize: 19,
@@ -203,7 +239,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     justifyContent: "center",
     marginRight: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   bottomButtons: {
     flexDirection: "row",
@@ -218,14 +254,14 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     flex: 1,
-    backgroundColor: "#6b705c",
+    backgroundColor: "#F5F5F5",
     padding: 15,
     borderWidth: 0,
     borderColor: "transparent",
   },
   bottomButtonL: {
     flex: 1,
-    backgroundColor: "#6b705c",
+    backgroundColor: "#F5F5F5",
     padding: 15,
     borderWidth: 0,
     borderColor: "transparent",
@@ -233,14 +269,14 @@ const styles = StyleSheet.create({
   },
   bottomButtonR: {
     flex: 1,
-    backgroundColor: "#6b705c",
+    backgroundColor: "#F5F5F5",
     padding: 15,
     borderWidth: 0,
     borderColor: "transparent",
     borderTopRightRadius: 15,
   },
   buttonText: {
-    color: "#ffe8d6",
+    color: "#292828",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,

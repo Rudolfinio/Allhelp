@@ -174,10 +174,10 @@ const FiltersScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Header
-          backgroundColor="#6b705c"
+          backgroundColor="#F5F5F5"
           rightComponent={{
             icon: "menu",
-            color: "#ffe8d6",
+            color: "#292828",
             onPress: openMenu,
           }}
           centerComponent={{ text: "Filters", style: styles.head }}
@@ -219,7 +219,7 @@ const FiltersScreen = ({ navigation }) => {
             title="Next"
             buttonStyle={{
               flex: 1,
-              backgroundColor: "#6b705c",
+              backgroundColor: "#F5F5F5",
               padding: 13,
               borderWidth: 0,
               borderColor: "transparent",
@@ -231,7 +231,7 @@ const FiltersScreen = ({ navigation }) => {
           >
             <Text
               style={{
-                color: "#ffe8d6",
+                color: "#292828",
                 textAlign: "center",
                 fontWeight: "bold",
                 fontSize: 16,
@@ -307,7 +307,7 @@ const FiltersScreen = ({ navigation }) => {
                             flex: 1,
                             marginRight: 5,
                             fontWeight: "bold",
-                            color: "#6b705c",
+                            color: "#424141",
                             fontWeight: "700",
                             fontSize: 15,
                           }}
@@ -317,25 +317,25 @@ const FiltersScreen = ({ navigation }) => {
                         <CheckBox
                           checked={allergeny[key].value}
                           onPress={() => handleCheckboxChange(key)}
-                          wrapperStyle={{ backgroundColor: "#ddbea9" }}
-                          containerStyle={{ backgroundColor: "#ddbea9" }}
-                          checkedColor="#6b705c"
-                          uncheckedColor="#bc6c25"
+                          wrapperStyle={{ backgroundColor: "#ffffff" }}
+                          containerStyle={{ backgroundColor: "#ffffff" }}
+                          checkedColor="#0073e6"
+                          uncheckedColor="#404f4f"
                         />
                         <CheckBox
                           checked={trace[key].value}
                           onPress={() => handleCheckboxChangeTraces(key)}
-                          wrapperStyle={{ backgroundColor: "#ddbea9" }}
-                          containerStyle={{ backgroundColor: "#ddbea9" }}
-                          checkedColor="#6b705c"
-                          uncheckedColor="#bc6c25"
+                          wrapperStyle={{ backgroundColor: "#ffffff" }}
+                          containerStyle={{ backgroundColor: "#ffffff" }}
+                          checkedColor="#0073e6"
+                          uncheckedColor="#404f4f"
                         />
                       </View>
                     ))}
                   <Button
                     onPress={closeModal}
                     buttonStyle={{
-                      backgroundColor: "#6b705c",
+                      backgroundColor: "#0073e6",
                       borderWidth: 0,
                       borderColor: "transparent",
                       borderRadius: 15,
@@ -345,7 +345,7 @@ const FiltersScreen = ({ navigation }) => {
                   >
                     <Text
                       style={{
-                        color: "#ffe8d6",
+                        color: "white",
                         textAlign: "center",
                         fontWeight: "bold",
                         fontSize: 16,
@@ -369,7 +369,7 @@ export default FiltersScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
     alignItems: "center",
   },
   image: {
@@ -380,15 +380,24 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   itemContainer: {
-    backgroundColor: "#ddbea9",
+    height: 100,
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
-    height: 100,
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   listText: {
-    color: "#6b705c",
+    color: "#424141",
     fontWeight: "bold",
     fontSize: 16,
     width: "72%",
@@ -405,7 +414,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#6b705c",
   },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
   },
@@ -418,7 +427,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "70%",
     height: "100%",
-    backgroundColor: "#ddbea9",
+    backgroundColor: "#ffffff",
     padding: 20,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,

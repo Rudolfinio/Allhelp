@@ -23,11 +23,11 @@ const eatInit = {
 
 const Eat = ({ route, navigation }) => {
   const buttonsData = [
-    { icon: "angry", value: 1, color: "red" },
-    { icon: "sad-tear", value: 2, color: "orange" },
-    { icon: "meh", value: 3, color: "#FFD700" },
-    { icon: "smile", value: 4, color: "lightgreen" },
-    { icon: "grin", value: 5, color: "green" },
+    { icon: "angry", value: 1, color: "white" },
+    { icon: "sad-tear", value: 2, color: "white" },
+    { icon: "meh", value: 3, color: "white" },
+    { icon: "smile", value: 4, color: "white" },
+    { icon: "grin", value: 5, color: "white" },
   ];
 
   const [selectedButton, setSelectedButton] = useState(null);
@@ -88,25 +88,25 @@ const Eat = ({ route, navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Header
-          backgroundColor="#6b705c"
+          backgroundColor="#F5F5F5"
           centerComponent={{ text: "Eat", style: styles.head }}
         />
         <ScrollView>
           <Calendar
             theme={{
-              backgroundColor: "#ffe8d6",
-              calendarBackground: "#ffe8d6",
-              selectedDayBackgroundColor: "#6b705c",
+              backgroundColor: "#ffffff",
+              calendarBackground: "#ffffff",
+              selectedDayBackgroundColor: "blue",
               selectedDayTextColor: "#ffffff",
               todayTextColor: "blue",
-              dayTextColor: "#6b705c",
-              arrowColor: "#6b705c",
-              monthTextColor: "#6b705c",
+              dayTextColor: "#424141",
+              arrowColor: "#424141",
+              monthTextColor: "#424141",
               textDayFontSize: 16,
               textMonthFontSize: 20,
               textDayHeaderFontSize: 16,
-              textSectionTitleColor: "#a5a58d",
-              textDisabledColor: "#ddbea9",
+              textSectionTitleColor: "#424141",
+              textDisabledColor: "#999e9e",
             }}
             onDayPress={(day) => {
               setSelected(day.dateString);
@@ -137,7 +137,7 @@ const Eat = ({ route, navigation }) => {
                 ]}
                 onPress={() => handleButtonPress(index)}
               >
-                <Icon name={button.icon} size={24} color="white" />
+                <Icon name={button.icon} size={24} color="black" />
               </TouchableOpacity>
             ))}
           </View>
@@ -152,17 +152,17 @@ const Eat = ({ route, navigation }) => {
             <Button
               onPress={show}
               buttonStyle={{
-                backgroundColor: "#b98b73",
+                backgroundColor: "#0073e6",
                 borderWidth: 0,
                 borderColor: "transparent",
                 borderRadius: 15,
-                width: "90%", // Szerokość przycisku
-                alignSelf: "center", // Wyśrodkowanie przycisku wzdłuż osi głównej
+                width: "90%",
+                alignSelf: "center",
               }}
             >
               <Text
                 style={{
-                  color: "#ffe8d6",
+                  color: "white",
                   textAlign: "center",
                   fontWeight: "bold",
                   fontSize: 16,
@@ -205,7 +205,7 @@ const Eat = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -219,19 +219,21 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 5,
+    borderColor: "black",
+    borderWidth: 2,
   },
   textInput: {
     margin: 20,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#cb997e",
+    borderColor: "#424141",
     borderRadius: 5,
-    color: "#6b705c",
-    fontWeight: "700",
+    color: "#424141",
+    fontWeight: "500",
     fontSize: 16,
   },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
   },
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#ddbea9",
+    backgroundColor: "#F5F5F5",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -257,7 +259,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonClose: {
-    backgroundColor: "#6b705c",
+    backgroundColor: "#0073e6",
     borderWidth: 0,
     borderColor: "transparent",
     borderRadius: 15,
@@ -273,7 +275,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textStyle: {
-    color: "#ffe8d6",
+    color: "white",
     textAlign: "center",
     marginTop: 8,
     fontWeight: "bold",

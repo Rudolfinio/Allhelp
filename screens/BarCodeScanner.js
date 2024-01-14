@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, StatusBar } from "react-native";
-import { BarCodePoint, BarCodeScanner } from "expo-barcode-scanner";
+import { BarCodeScanner } from "expo-barcode-scanner";
 import { Product, handleBarCodeRead } from "./Product";
 import { Header, Button } from "@rneui/themed";
 
@@ -49,7 +49,7 @@ export default function App({ navigation }) {
   return (
     <View style={styles.container}>
       <Header
-        backgroundColor="#6b705c"
+        backgroundColor="#F5F5F5"
         centerComponent={{ text: "Camera", style: styles.head }}
       />
       <View style={styles.container}>
@@ -65,7 +65,7 @@ export default function App({ navigation }) {
             <Button
               onPress={() => setScanned(false)}
               buttonStyle={{
-                backgroundColor: "#cb997e",
+                backgroundColor: "#d9e4ff",
                 borderWidth: 0,
                 borderColor: "transparent",
                 borderRadius: 15,
@@ -75,7 +75,7 @@ export default function App({ navigation }) {
             >
               <Text
                 style={{
-                  color: "#ffe8d6",
+                  color: "#292828",
                   textAlign: "center",
                   fontWeight: "bold",
                   fontSize: 16,
@@ -94,18 +94,18 @@ export default function App({ navigation }) {
                 })
               }
               buttonStyle={{
-                backgroundColor: "#6b705c",
+                backgroundColor: "#0073e6",
                 borderWidth: 0,
                 borderColor: "transparent",
                 borderRadius: 15,
                 width: 150,
                 height: 40,
-                marginLeft:20,
+                marginLeft: 20,
               }}
             >
               <Text
                 style={{
-                  color: "#ffe8d6",
+                  color: "white",
                   textAlign: "center",
                   fontWeight: "bold",
                   fontSize: 16,
@@ -124,7 +124,7 @@ export default function App({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   maintext: {
-    color: "#6b705c",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 16,
     margin: 20,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: "tomato",
   },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
   },

@@ -99,9 +99,9 @@ const User = ({ route, navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#ffe8d6"}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
       <Header
-        backgroundColor="#6b705c"
+        backgroundColor="#F5F5F5"
         centerComponent={{ text: "User", style: styles.head }}
       />
       <ScrollView style={styles.scrollViewContainer}>
@@ -116,11 +116,11 @@ const User = ({ route, navigation }) => {
                 checked={allergeny[key].value}
                 onPress={() => handleCheckboxChange(key)}
                 title={allergeny[key].english}
-                textStyle={{ backgroundColor: "#ddbea9", color: "#6b705c" }}
-                wrapperStyle={{ backgroundColor: "#ddbea9" }}
-                containerStyle={{ backgroundColor: "#ddbea9" }}
-                checkedColor="#6b705c"
-                uncheckedColor="#bc6c25"
+                textStyle={{ backgroundColor: "#F5F5F5", color: "#424141" }}
+                wrapperStyle={{ backgroundColor: "#F5F5F5" }}
+                containerStyle={{ backgroundColor: "#F5F5F5" }}
+                checkedColor="#0073e6"
+                uncheckedColor="#404f4f"
               />
             </View>
           ))}
@@ -161,10 +161,10 @@ const User = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffe8d6",
+    backgroundColor: "#ffffff",
   },
   head: {
-    color: "#ffe8d6",
+    color: "#292828",
     fontWeight: "bold",
     fontSize: 20,
   },
@@ -185,32 +185,32 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     flex: 1,
-    backgroundColor: "#6b705c",
+    backgroundColor: "#F5F5F5",
     padding: 15,
     borderWidth: 0,
     borderColor: "transparent",
-    height: 70
+    height: 70,
   },
   bottomButtonL: {
     flex: 1,
-    backgroundColor: "#6b705c",
+    backgroundColor: "#F5F5F5",
     padding: 25,
     borderWidth: 0,
     borderColor: "transparent",
     borderTopLeftRadius: 15,
-    height: 70
+    height: 70,
   },
   bottomButtonR: {
     flex: 1,
-    backgroundColor: "#6b705c",
+    backgroundColor: "#F5F5F5",
     padding: 15,
     borderWidth: 0,
     borderColor: "transparent",
     borderTopRightRadius: 15,
-    height: 70
+    height: 70,
   },
   buttonText: {
-    color: "#ffe8d6",
+    color: "#292828",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
