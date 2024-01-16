@@ -151,11 +151,7 @@ const FiltersScreen = ({ navigation }) => {
     console.log(apiUrl);
     // fetchData(apiUrl);
   };
-  const handleItemPress = (code) => {
-    // Call the callback function to navigate to the Product screen
-    console.log("Pressed item with code:", code); // Check if the code is logged correctly
-    console.log("Navigating to Product screen with code:", code); // Check if the code is logged correctly
-
+  const handleItemPress = (code) => {=
     navigateToProduct(code);
   };
 
@@ -164,7 +160,6 @@ const FiltersScreen = ({ navigation }) => {
   };
 
   const handleEndReached = () => {
-    // Load more data when the end of the list is reached
     if (page < pages) {
       setPage((prevPage) => prevPage + 1);
     }
