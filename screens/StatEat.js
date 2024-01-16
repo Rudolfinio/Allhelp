@@ -136,17 +136,13 @@ const StatEat = ({ route, navigation }) => {
         const existingData = await AsyncStorage.getItem("eat");
         const dd = JSON.parse(existingData);
 
-        // Usuń wybraną datę
         delete dd.eat[codeSel][date];
 
-        // Aktualizuj selectedDates
         const updatedSelectedDates = { ...selectedDates };
         delete updatedSelectedDates[date];
 
-        // Zastosuj zmiany do stanu
         setSelectedDates(updatedSelectedDates);
 
-        // Jeśli nie ma już dat dla tego produktu, usuń cały wpis
         const productData = dd.eat[codeSel];
         const dates = Object.keys(productData).filter(
           (key) => key !== "productImageSmall" && key !== "productName"
@@ -155,10 +151,8 @@ const StatEat = ({ route, navigation }) => {
           delete dd.eat[codeSel];
         }
 
-        // Zapisz zmiany w AsyncStorage
         await AsyncStorage.setItem("eat", JSON.stringify(dd));
 
-        // Odśwież widok
       } catch (error) {
         console.error("Error accessing AsyncStorage:", error);
       }
