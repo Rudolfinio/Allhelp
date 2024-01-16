@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flex: 1,
-    marginBottom: 80, // Adjust this value to create space for the buttons
+    marginBottom: 80,
   },
   bottomButtons: {
     flexDirection: "row",
